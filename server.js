@@ -1,8 +1,15 @@
-const io = require("socket.io")(5000);
-const express = require("express");
 const cors = require("cors");
 const path = require("path");
+
+const express = require("express");
+const socket = require("socket.io");
+// App setup
+const PORT = process.env.PORT || 5000;
 const app = express();
+const server = app.listen(PORT, function () {
+  console.log(`Listening on port ${PORT}`);
+});
+
 app.use(cors());
 
 if (process.env.NODE_ENV === "production") {
@@ -11,6 +18,8 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.join(__dirname, "build", "index.html"));
   });
 }
+
+const io = socket(server);
 
 io.on("connection", (socket) => {
   const id = socket.handshake.query.id;
